@@ -1,8 +1,15 @@
 function! s:isHelm()
   let filepath = expand("%:p")
 
-  " yaml/yml/tpl/txt inside templates dir
-  if filepath =~ '\v/(templates)/.*\.(ya?ml|tpl|txt)$' | return 1 | endif
+  " yaml/yml/tpl/txt inside templates or sub dirs
+  " Chart.yaml exsists in partent of templates dir
+  let templates_pos = stridx(filepath, '/templates/')
+  if templates_pos != -1
+    let chart_root = strpart(filepath, 0, templates_pos)
+    if filereadable(chart_root . '/Chart.yaml') && filepath =~# '\v\.(ya?ml|tpl|txt)$'
+      return 1
+    endif
+  endif
 
   let filename = expand("%:t")
 
