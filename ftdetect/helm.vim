@@ -22,7 +22,17 @@ function! s:isHelm()
   return 0
 endfunction
 
-autocmd BufRead,BufNewFile * if s:isHelm() | set ft=helm | endif
+" create helper function for neovim compatibility
+function! s:CheckAndSetHelmFT()
+  if s:isHelm()
+    set ft=helm
+  endif
+endfunction
+
+" wait until vim/neovim filetype detection is done
+autocmd FileType yaml,text,gotmpl call s:CheckAndSetHelmFT()
+
+autocmd BufRead,BufNewFile *.tpl call s:CheckAndSetHelmFT()
 autocmd BufRead,BufNewFile values*.yaml setfiletype yaml.helm-values
 
 " Use {{/* */}} as comments
